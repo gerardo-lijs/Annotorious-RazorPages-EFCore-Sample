@@ -6,15 +6,25 @@
 
 <div class="text-center">
     <h4>Annotorius with Entity Framework Core sample</h4>
+</div>
 
+<div class="row ml-2">
+    <p>The idea of this sample project is to show how to persist Annotorious annotations to a database using Razor Pages and Entity Framework. Check GitHub repo for more information. It's really simple and both projects are amazing so hopefully this will make it easier for .NET developers to use them!</p>
+
+    <p>It uses <a target="_blank" href="https://openseadragon.github.io/">Openseadragon</a> to show a Deep Zoom Image <a target="_blank" href="https://en.wikipedia.org/wiki/Deep_Zoom">(DZI)</a> and <a target="_blank" href="https://recogito.github.io/annotorious/">Annotorious</a> to annoate.</p>
+
+    <p>Hold SHIFT while clicking and dragging the mouse to create a new annotation.</p>
+</div>
+
+<div class="row">
     @foreach (var panorama in Model.Panoramas)
     {
-        <div class="card" style="width: 18rem;">
+        <div class="card ml-2 mr-2" style="width: 18rem;">
             @*<img class="card-img-top" src="..." alt="Card image cap">*@
             <div class="card-body">
                 <h5 class="card-title">@panorama.Name</h5>
-              @*  <p class="card-text">@panorama.Description</p>*@
-                <a asp-page="/Details" asp-route-Id="@panorama.PanoramaId"class="btn btn-primary">View</a>
+                @*  <p class="card-text">@panorama.Description</p>*@
+                <a asp-page="/Details" asp-route-Id="@panorama.PanoramaId" class="btn btn-primary">View</a>
             </div>
         </div>
     }
