@@ -1,0 +1,21 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h4>Annotorius with Entity Framework Core sample</h4>
+
+    @foreach (var panorama in Model.Panoramas)
+    {
+        <div class="card" style="width: 18rem;">
+            @*<img class="card-img-top" src="..." alt="Card image cap">*@
+            <div class="card-body">
+                <h5 class="card-title">@panorama.Name</h5>
+              @*  <p class="card-text">@panorama.Description</p>*@
+                <a asp-page="/Details" asp-route-Id="@panorama.PanoramaId"class="btn btn-primary">View</a>
+            </div>
+        </div>
+    }
+</div>

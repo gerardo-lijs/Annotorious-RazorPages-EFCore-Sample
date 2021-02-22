@@ -1,0 +1,103 @@
+﻿@page "/Details/{id}"
+@model DetailsModel
+@{
+    ViewData["Title"] = "Panorama";
+}
+
+@section Head
+{
+    <link rel="stylesheet" href="~/lib/annotorious-openseadragon/annotorious.min.css">
+}
+
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@functions{
+    public string GetAntiXsrfRequestToken() => Xsrf.GetAndStoreTokens(Model.HttpContext).RequestToken;
+}
+
+<div class="row">
+    <div class="col-12" id="dzi" style="width: 100%; height: 600px;"></div>
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript" src="~/lib/openseadragon/openseadragon.min.js"></script>
+    <script type="text/javascript" src="~/lib/annotorious-openseadragon/openseadragon-annotorious.min.js"></script>
+
+    <script type="text/javascript">
+        window.onload = function () {
+            var viewer = OpenSeadragon({
+                id: "dzi",
+                prefixUrl: "/lib/openseadragon/images/",
+                tileSources: "/dzi/@Model.Id/deepzoomimage.dzi"
+            });
+
+            // Initialize the Annotorious plugin
+            var config = {
+                readOnly: false,
+                //locale: es,
+                widgets: [
+                    'COMMENT',
+                    //{ widget: 'TAG', vocabulary: ['Presencia', 'Ausencia', 'Duda'] }
+                ]
+            };
+            var anno = OpenSeadragon.Annotorious(viewer, config);
+
+            anno.setAuthInfo({
+                id: '@Model.CurrentUserId',
+                displayName: '@Model.CurrentUserName'
+            });
+
+            // Load annotations in W3C WebAnnotation format
+            $.ajax({
+                url: '@Url.Page($"/Details", "LoadAnnotations")',
+                type: "POST",
+                async: true,
+                headers: {
+                    "RequestVerificationToken": '@GetAntiXsrfRequestToken()'
+                },
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    anno.setAnnotations(response);
+                }
+            });
+
+            // Attach handlers to listen to events
+            anno.on('createAnnotation', function (annotation) {
+                $.ajax({
+                    url: '@Url.Page($"/Details", "CreateAnnotation")',
+                    type: "POST",
+                    headers: {
+                        "RequestVerificationToken": '@GetAntiXsrfRequestToken()'
+                    },
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(annotation)
+                });
+            });
+
+            anno.on('updateAnnotation', function (annotation, previous) {
+                $.ajax({
+                    url: '@Url.Page($"/Details", "UpdateAnnotation")',
+                    type: "POST",
+                    headers: {
+                        "RequestVerificationToken": '@GetAntiXsrfRequestToken()'
+                    },
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(annotation)
+                });
+            });
+
+            anno.on('deleteAnnotation', function (annotation) {
+                $.ajax({
+                    url: '@Url.Page($"/Details", "DeleteAnnotation")',
+                    type: "POST",
+                    headers: {
+                        "RequestVerificationToken": '@GetAntiXsrfRequestToken()'
+                    },
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(annotation)
+                });
+            });
+        }
+    </script>
+
+}
