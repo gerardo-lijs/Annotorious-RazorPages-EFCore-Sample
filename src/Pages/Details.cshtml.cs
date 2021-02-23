@@ -29,6 +29,8 @@ namespace Annotorious_RazorPages_EFCore_Sample.Pages
         public string CurrentUserName => "Gerardo Lijs";
         //public string CurrentUserName => User.Claims.First(c => c.Type == System.Security.Claims.ClaimTypes.Name).Value;
 
+        public bool CanEditAnnotations => true;
+
         public IActionResult OnGet(Guid? id)
         {
             if (id is null) return NotFound();
